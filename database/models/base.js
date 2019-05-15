@@ -9,7 +9,8 @@ class BaseModel extends Sequelize.Model {
       id: {
         type: Sequelize.DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true
+        primaryKey: true,
+        comment: '主键ID'
       }
     }, attributes)
     Object.assign(_options, {
