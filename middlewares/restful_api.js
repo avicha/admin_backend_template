@@ -91,9 +91,12 @@ const list = (model, returning = true) => {
   }])
 }
 const create = (model, returning = true) => {
-  return async (ctx, next) => {
+  return compose([SchemaValidate(restfulSchema.createSchema, 'body', {
+    allowUnknown: true,
+    stripUnknown: false
+  }), async (ctx, next) => {
     try {
-      const result = await restfulService.create(model, ctx.request.body)
+      const result = await restfulService.create(model, ctx.state.inputParams)
       if (returning) {
         return ctx.body = {
           code: HttpStatusCode.HTTP_CREATED,
@@ -108,13 +111,16 @@ const create = (model, returning = true) => {
     } catch (e) {
       ctx.throws(e)
     }
-  }
+  }])
 }
 const updateById = (model, returning = true) => {
-  return compose([UUIDValidate, async (ctx, next) => {
+  return compose([UUIDValidate, SchemaValidate(restfulSchema.updateSchema, 'body', {
+    allowUnknown: true,
+    stripUnknown: false
+  }), async (ctx, next) => {
     const modelId = ctx.params.id
     try {
-      const result = await restfulService.updateById(model, modelId, ctx.request.body)
+      const result = await restfulService.updateById(model, modelId, ctx.state.inputParams)
       if (returning) {
         return ctx.body = {
           code: HttpStatusCode.HTTP_OK,

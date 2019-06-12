@@ -32,8 +32,23 @@ const listSchema = Joi.object().keys({
   paranoid: Joi.boolean(),
   order: string2arrayJoi.string2array().items(Joi.string())
 })
-
+//创建的参数验证
+const createSchema = Joi.object().keys({
+  id: Joi.strip(),
+  created_at: Joi.strip(),
+  updated_at: Joi.strip(),
+  deleted_at: Joi.strip()
+})
+//更新的参数验证
+const updateSchema = Joi.object().keys({
+  id: Joi.strip(),
+  created_at: Joi.strip(),
+  updated_at: Joi.strip(),
+  deleted_at: Joi.strip()
+})
 module.exports = {
   getSchema,
-  listSchema
+  listSchema,
+  createSchema,
+  updateSchema
 }
