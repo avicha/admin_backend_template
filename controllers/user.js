@@ -6,9 +6,6 @@ module.exports = class UserController extends BaseController {
     const username = ctx.request.body.username
     const password = ctx.request.body.password
     const user = await ctx.models.User.validateUser(username, password)
-    await user.update({
-      last_login_time: user.updated_at
-    })
     let token = jwt.sign({
       user_id: user.id
     }, ctx.config.server.secretKey, {
@@ -26,11 +23,11 @@ module.exports = class UserController extends BaseController {
     return ctx.success()
   }
   async resetPassword(ctx) {
-    let old_password = ctx.request.body.old_password
-    let new_password = ctx.request.body.new_password
-    const user = await ctx.models.User.validateUser(ctx.state.user.username, old_password)
+    let oldPassword = ctx.request.body.oldPassword
+    let newPassword = ctx.request.body.newPassword
+    const user = await ctx.models.User.validateUser(ctx.state.user.username, oldPassword)
     await user.update({
-      password_hash: ctx.models.User.cryptoPassword(new_password)
+      password_hash: ctx.models.User.cryptoPassword(newPassword)
     })
     return ctx.success()
   }

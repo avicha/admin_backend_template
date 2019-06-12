@@ -8,7 +8,7 @@ module.exports = {
     pwd: env.POSTGRES_AUTH_PWD
   } : null,
   // with database
-  database: env.POSTGRES_DATABASE || 'resource-db',
+  database: env.POSTGRES_DATABASE || 'postgres',
   // with uri
   host: env.POSTGRES_HOST || '127.0.0.1',
   port: env.POSTGRES_PORT || 5432,

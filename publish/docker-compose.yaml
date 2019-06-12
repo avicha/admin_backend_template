@@ -2,7 +2,7 @@ version: "3"
 services:
 
   web:
-    image: ${NAME}:${NODE_ENV:-development}-${VERSION}
+    image: ${PROJECT_NAME}:${NODE_ENV:-development}-${APP_VERSION}
     restart: always
     depends_on:
       - redis
@@ -33,7 +33,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: root
-      POSTGRES_DB: "${NAME}-db"
+      POSTGRES_DB: "${PROJECT_NAME}-db"
       POSTGRES_INITDB_ARGS: --locale=en_US.UTF-8 --encoding=utf8
       POSTGRES_PASSWORD: 123456
     volumes:

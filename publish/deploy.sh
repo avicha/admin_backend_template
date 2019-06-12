@@ -1,24 +1,18 @@
 #!/bin/bash
 set -e
 
-projectName=$NAME
-VERSION=$VERSION
-export VERSION=${VERSION}
-
 if [ -z $NODE_ENV ]; then
     export NODE_ENV=development
 fi
 
-image=${projectName}:${NODE_ENV}-${VERSION}
+image=${PROJECT_NAME}:${NODE_ENV}-${APP_VERSION}
 
-docker-compose -f publish/docker-compose.yaml -p ${projectName} down
+docker-compose -f publish/docker-compose.yaml -p ${PROJECT_NAME} down
 
-if [ "$NODE_ENV" != "development" ]; then
-    docker image load -i publish/${image}.tar
-    docker image load -i publish/redis.tar
-    docker image load -i publish/postgres.tar
-fi
+docker image load -i publish/${image}.tar
+docker image load -i publish/redis.tar
+docker image load -i publish/postgres.tar
 
-echo "running new project named ${projectName}, port 16000, restart always, image ${image}"
-docker-compose -f publish/docker-compose.yaml -p ${projectName} up -d
-docker-compose -f publish/docker-compose.yaml -p ${projectName} logs -t --tail=200
+echo "running new project named ${PROJECT_NAME}, restart always, image ${image}"
+docker-compose -f publish/docker-compose.yaml -p ${PROJECT_NAME} up -d
+docker-compose -f publish/docker-compose.yaml -p ${PROJECT_NAME} logs -t --tail=200

@@ -44,11 +44,6 @@ module.exports = {
         allowNull: false,
         comment: '注册类型，1为用户名注册，2为手机号码注册，3为邮箱注册，4为微信注册'
       },
-      last_login_time: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        comment: '上次登录时间'
-      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false

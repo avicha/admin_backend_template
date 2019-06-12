@@ -1,13 +1,12 @@
 #!/bin/bash
 set -e
 
-projectName=$NAME
-VERSION=$VERSION
-export VERSION=${VERSION}
 if [ -z $NODE_ENV ]; then
     export NODE_ENV=development
 fi
-image=${projectName}:${NODE_ENV}-${VERSION}
+
+image=${PROJECT_NAME}:${NODE_ENV}-${APP_VERSION}
+
 build(){
     if [ `docker image ls ${image} -q` ]; then
         docker image rm ${image}
@@ -25,13 +24,7 @@ sync_image(){
     chmod 777 publish/redis.tar
     chmod 777 publish/postgres.tar
 }
-if [ "$NODE_ENV" = "development" ]; then
-    docker-compose -f publish/docker-compose.yaml -p ${projectName} down
-fi
-build
 
-if [ "$NODE_ENV" = "development" ]; then
-    docker-compose -f publish/docker-compose.yaml -p ${projectName} up -d
-else
-    sync_image
-fi
+docker-compose -f publish/docker-compose.yaml -p ${PROJECT_NAME} down
+build
+sync_image

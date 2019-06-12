@@ -1,6 +1,6 @@
 {
   "name": "postgres-backend-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "postgres backend template",
   "main": "app.js",
   "bin": "app.js",
@@ -32,13 +32,13 @@
     "sequelize-cli": "^5.4.0"
   },
   "scripts": {
-    "app": "npx sequelize db:migrate && npx sequelize db:seed:all && node app.js",
+    "app": "npx sequelize db:migrate && npx sequelize db:seed:all && PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version node app.js",
     "pkg": "pkg -t node10-macos-x64 ./",
-    "build": "NAME=$npm_package_name VERSION=$npm_package_version ./publish/build.sh",
-    "deploy": "NAME=$npm_package_name VERSION=$npm_package_version ./publish/deploy.sh",
-    "log": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name logs -f -t --tail=200",
-    "start": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name up -d",
-    "stop": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name down",
+    "build": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version ./publish/build.sh",
+    "deploy": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version ./publish/deploy.sh",
+    "log": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name logs -f -t --tail=200",
+    "start": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name up -d",
+    "stop": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name down",
     "migration:make": "npx sequelize migration:generate",
     "migrate": "npx sequelize db:migrate",
     "migrate:rollback": "npx sequelize db:migrate:undo",

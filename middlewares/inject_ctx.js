@@ -7,7 +7,7 @@ const response = function(code = HttpStatusCode.HTTP_OK, message = 'success', da
     data
   }
 }
-const success = function(result = {}, fields = '') {
+const success = function(result, fields = '') {
   if (fields) {
     if (typeof fields === 'string') {
       fields = fields.split(',')
