@@ -1,59 +1,56 @@
 {
-	"name": "PROJECT_NAME",
-	"version": "1.0.0",
-	"description": "PROJECT_DESC",
-	"main": "app.js",
-	"bin": "app.js",
-	"pkg": {
-		"scripts": [
-			"database/models/**/*.js"
-		],
-		"assets": [
-			"env/common.env",
-			"env/development.env"
-		]
-	},
-	"dependencies": {
-		"bcryptjs": "^2.4.3",
-		"ioredis": "^4.9.0",
-		"jsonwebtoken": "^8.5.1",
-		"koa": "^2.4.1",
-		"koa-body": "^4.0.4",
-		"koa-compose": "^4.1.0",
-		"koa-logger": "^3.1.0",
-		"koa-router": "^7.3.0",
-		"koa-send": "^5.0.0",
-		"lodash": "^4.17.11",
-		"mkdirp": "^0.5.1",
-		"pg": "^7.9.0",
-		"pg-hstore": "^2.3.2",
-		"rimraf": "^2.6.3",
-		"sequelize": "^5.2.1",
-		"sequelize-cli": "^5.4.0"
-	},
-	"devDependencies": {
-		"pm2": "^2.7.2"
-	},
-	"scripts": {
-		"app": "npx sequelize db:migrate && node app.js",
-		"pkg": "pkg -t node10-macos-x64 ./",
-		"build": "./docker/build.sh",
-		"deploy": "./docker/deploy.sh",
-		"log": "docker-compose -f docker/docker-compose.yaml -p etech-main-backend logs -f -t --tail=200",
-		"start": "docker-compose -f docker/docker-compose.yaml -p etech-main-backend up -d",
-		"stop": "docker-compose -f docker/docker-compose.yaml -p etech-main-backend down",
-		"migration:make": "npx sequelize migration:generate",
-		"migrate": "npx sequelize db:migrate",
-		"migrate:rollback": "npx sequelize db:migrate:undo",
-		"migrate:reset": "npx sequelize db:migrate:undo:all",
-		"migrate:refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
-		"seeder:make": "npx sequelize seed:generate",
-		"seed": "npx sequelize db:seed:all",
-		"seed:clear": "npx sequelize db:seed:undo:all",
-		"seed:refresh": "npx sequelize db:seed:undo:all && npx sequelize db:seed:all",
-		"init:db": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:undo:all && npx sequelize db:seed:all",
-		"migrate-seed": "npx sequelize db:migrate && npx sequelize db:seed:all"
-	},
-	"author": "avicha",
-	"license": "ISC"
+  "name": "postgres-backend-template",
+  "version": "1.0.0",
+  "description": "postgres backend template",
+  "main": "app.js",
+  "bin": "app.js",
+  "pkg": {
+    "scripts": [
+      "database/models/**/*.js"
+    ],
+    "assets": [
+      "publish/common.env",
+      "publish/development.env"
+    ]
+  },
+  "dependencies": {
+    "@hapi/joi": "^15.0.3",
+    "bcryptjs": "^2.4.3",
+    "ioredis": "^4.9.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.4.1",
+    "koa-body": "^4.0.4",
+    "koa-compose": "^4.1.0",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.3.0",
+    "log4js": "^4.3.1",
+    "mkdirp": "^0.5.1",
+    "pg": "^7.9.0",
+    "pg-hstore": "^2.3.2",
+    "rimraf": "^2.6.3",
+    "sequelize": "^5.2.1",
+    "sequelize-cli": "^5.4.0"
+  },
+  "scripts": {
+    "app": "npx sequelize db:migrate && npx sequelize db:seed:all && node app.js",
+    "pkg": "pkg -t node10-macos-x64 ./",
+    "build": "NAME=$npm_package_name VERSION=$npm_package_version ./publish/build.sh",
+    "deploy": "NAME=$npm_package_name VERSION=$npm_package_version ./publish/deploy.sh",
+    "log": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name logs -f -t --tail=200",
+    "start": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name up -d",
+    "stop": "NAME=$npm_package_name VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name down",
+    "migration:make": "npx sequelize migration:generate",
+    "migrate": "npx sequelize db:migrate",
+    "migrate:rollback": "npx sequelize db:migrate:undo",
+    "migrate:reset": "npx sequelize db:migrate:undo:all",
+    "migrate:refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate",
+    "seeder:make": "npx sequelize seed:generate",
+    "seed": "npx sequelize db:seed:all",
+    "seed:clear": "npx sequelize db:seed:undo:all",
+    "seed:refresh": "npx sequelize db:seed:undo:all && npx sequelize db:seed:all",
+    "init:db": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:undo:all && npx sequelize db:seed:all",
+    "migrate-seed": "npx sequelize db:migrate && npx sequelize db:seed:all"
+  },
+  "author": "avicha",
+  "license": "ISC"
 }

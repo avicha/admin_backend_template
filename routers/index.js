@@ -6,7 +6,8 @@ module.exports = {
     const apiRouter = new Router({
       prefix: '/api'
     })
-    apiRouter.use('/user', userRouter.routes())
+    apiRouter.use('/user', userRouter.initApp(app))
+    app.use(app.middlewares.injectCtx)
     app.use(apiRouter.routes())
   }
 }

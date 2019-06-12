@@ -1,4 +1,6 @@
 const env = require('../env')
+const { pgLogger } = require('../loggers')
+
 module.exports = {
   // with database, username, and password
   auth: (env.POSTGRES_AUTH_USER && env.POSTGRES_AUTH_PWD) ? {
@@ -6,7 +8,7 @@ module.exports = {
     pwd: env.POSTGRES_AUTH_PWD
   } : null,
   // with database
-  database: env.POSTGRES_DATABASE || 'node-project-maker-db',
+  database: env.POSTGRES_DATABASE || 'resource-db',
   // with uri
   host: env.POSTGRES_HOST || '127.0.0.1',
   port: env.POSTGRES_PORT || 5432,
@@ -25,7 +27,7 @@ module.exports = {
       // How many times a failing query is automatically retried. Set to 0 to disable retrying on SQL_BUSY error.
       max: 3
     },
-    logging: env.NODE_ENV == 'production' ? false : console.log,
+    logging: env.DEBUG == 'true' ? pgLogger.debug : false,
     benchmark: true
   }
 }

@@ -1,0 +1,53 @@
+version: "3"
+services:
+
+  web:
+    image: ${NAME}:${NODE_ENV:-development}-${VERSION}
+    restart: always
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - ../env/common.env
+      - ../env/${NODE_ENV:-development}.env
+    volumes:
+      - "web_logs:/usr/src/app/logs"
+      - "web_uploads:/usr/src/app/uploads"
+    ports:
+      - "16000:16000"
+    networks:
+      - webnet
+
+  redis:
+    image: redis
+    hostname: redis
+    restart: always
+    volumes:
+      - "redis_data:/data"
+    networks:
+      - webnet
+
+  postgres:
+    image: postgres:11
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_DB: "${NAME}-db"
+      POSTGRES_INITDB_ARGS: --locale=en_US.UTF-8 --encoding=utf8
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    ports:
+      - "16001:5432"
+    networks:
+      - webnet
+
+networks:
+  webnet:
+
+volumes:
+  web_logs:
+  web_uploads:
+  redis_data:
+  pgdata:

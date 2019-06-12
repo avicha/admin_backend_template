@@ -1,4 +1,5 @@
 const env = require('../env')
+
 module.exports = {
   // with database, username, and password
   auth: (env.REDIS_AUTH_USER && env.REDIS_AUTH_PWD) ? {

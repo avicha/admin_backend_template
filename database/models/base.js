@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const BaseError = require('../../exceptions/base_error')
+const HttpStatusCode = require('../../constants/http_status_code')
 
 class BaseModel extends Sequelize.Model {
   static init(attributes, options = {}) {
@@ -34,7 +35,13 @@ class BaseModel extends Sequelize.Model {
     return super.init(_attributes, _options)
   }
   static notFoundError(id) {
-    return new BaseError(`404${this.TABLE_CODE}`, `找不到你需要的资源${id||''}`)
+    return new BaseError(`${HttpStatusCode.HTTP_NOT_FOUND}${this.TABLE_CODE}`, `找不到你需要的资源${id||''}`)
+  }
+  static forbiddenAccessError(id) {
+    return new BaseError(`${HttpStatusCode.HTTP_FORBIDDEN}${this.TABLE_CODE}`, `你没有权限访问资源${id||''}`)
+  }
+  static nameExistsError(name) {
+    return new BaseError(`${HttpStatusCode.HTTP_FORBIDDEN}${this.TABLE_CODE}`, `你添加名称为${name||''}的资源已经存在`)
   }
 }
 

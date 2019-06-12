@@ -7,7 +7,7 @@ module.exports = async (ctx, next) => {
     let payload = await UserModel.verifyToken(token)
     if (payload) {
       ctx.state.user = await UserModel.findByPk(payload.user_id, {
-        attributes: ['id', 'username', 'nickname', 'avatar', 'phone_number', 'last_login_time']
+        attributes: { exclude: ['password_hash'] }
       })
       await next()
     } else {

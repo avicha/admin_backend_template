@@ -1,6 +1,6 @@
 'use strict';
 
-const userRegisterType = require('../../constants/user_register_type')
+const UserRegisterType = require('../../constants/user_register_type')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -40,7 +40,7 @@ module.exports = {
       },
       register_type: {
         type: DataTypes.SMALLINT,
-        defaultValue: userRegisterType.USERNAME,
+        defaultValue: UserRegisterType.USERNAME,
         allowNull: false,
         comment: '注册类型，1为用户名注册，2为手机号码注册，3为邮箱注册，4为微信注册'
       },

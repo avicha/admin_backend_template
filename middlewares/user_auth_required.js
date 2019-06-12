@@ -6,6 +6,6 @@ module.exports = compose([loadUser, async (ctx, next) => {
   if (ctx.state.user) {
     await next()
   } else {
-    throw new UserNotAuthError()
+    ctx.throws(new UserNotAuthError())
   }
 }])

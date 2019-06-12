@@ -1,7 +1,5 @@
 const Sequelize = require('sequelize')
-const {
-  postgresConnection
-} = require('../../connections/postgres')
+const postgresConnection = require('../../connections/postgres')
 const fs = require('fs')
 
 const db = {}

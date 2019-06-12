@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const {
   USER_TABLE_CODE
 } = require('../../constants/table_code')
-const userRegisterType = require('../../constants/user_register_type')
+const UserRegisterType = require('../../constants/user_register_type')
 const UserPasswordError = require('../../exceptions/user_password_error')
 const UserNotAuthError = require('../../exceptions/user_not_auth_error')
 const UserNotFoundError = require('../../exceptions/user_not_found_error')
@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     register_type: {
       type: DataTypes.SMALLINT,
-      defaultValue: userRegisterType.USERNAME,
+      defaultValue: UserRegisterType.USERNAME,
       allowNull: false,
       comment: '注册类型，1为用户名注册，2为手机号码注册，3为邮箱注册，4为微信注册'
     },

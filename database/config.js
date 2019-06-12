@@ -8,9 +8,7 @@ module.exports = {
     "port": config.postgres.port,
     "dialect": "postgres",
     "migrationStorage": "sequelize",
-    "seederStorage": "sequelize",
-    "migrationStorageTableName": "sequelize_meta",
-    "seederStorageTableName": "sequelize_data"
+    "seederStorage": "sequelize"
   },
   "test": {
     "username": config.postgres.auth.user,
@@ -20,9 +18,7 @@ module.exports = {
     "port": config.postgres.port,
     "dialect": "postgres",
     "migrationStorage": "sequelize",
-    "seederStorage": "sequelize",
-    "migrationStorageTableName": "sequelize_meta",
-    "seederStorageTableName": "sequelize_data"
+    "seederStorage": "sequelize"
   },
   "production": {
     "username": config.postgres.auth.user,
@@ -32,8 +28,6 @@ module.exports = {
     "port": config.postgres.port,
     "dialect": "postgres",
     "migrationStorage": "sequelize",
-    "seederStorage": "sequelize",
-    "migrationStorageTableName": "sequelize_meta",
-    "seederStorageTableName": "sequelize_data"
+    "seederStorage": "sequelize"
   }
 }

@@ -1,106 +1,187 @@
 const UUIDValidate = require('./uuid_validate')
+const SchemaValidate = require('./schema_validate')
 const compose = require('koa-compose')
-const {
-  findById,
-  list,
-  create,
-  updateById,
-  removeById
-} = require('../services/restful')
-module.exports = {
-  auto: function (model, allowedMethods = ['get', 'list', 'create', 'update', 'remove']) {
-    return compose([UUIDValidate, async (ctx, next) => {
-      const modelId = ctx.params.id
-      const options = {}
-      let result
-      switch (ctx.method.toUpperCase()) {
+const HttpStatusCode = require('../constants/http_status_code')
+const restfulSchema = require('../schemas/restful')
+const restfulService = require('../services/restful')
+const { appLogger } = require('../loggers')
+
+const auto = (model, allowedMethods = ['get', 'list', 'create', 'update', 'remove']) => {
+  //如果传入的单个允许方法，把字符串变成数组方便统一处理
+  if (typeof allowedMethods === 'string') {
+    allowedMethods = [allowedMethods]
+  }
+  return async (ctx, next) => {
+    //模型ID
+    const modelId = ctx.params.id
+    //根据restful规范，分别调用增删查改列表的各自实现
+    switch (ctx.method.toUpperCase()) {
       case 'GET':
         if (modelId) {
           if (allowedMethods.includes('get')) {
-            result = await findById(model, modelId, ctx.request.query)
+            return findById(model)(ctx, next)
           }
         } else {
           if (allowedMethods.includes('list')) {
-            result = await list(model, ctx.request.query)
+            return list(model)(ctx, next)
           }
         }
         break
       case 'POST':
         if (allowedMethods.includes('create')) {
-          const createdObject = await create(model, ctx.request.body)
-          if (ctx.request.query.returning) {
-            result = createdObject
-          } else {
-            result = {
-              id: createdObject.id,
-              created_at: createdObject.created_at
-            }
-          }
+          return create(model)(ctx, next)
         }
         break
       case 'PUT':
         if (allowedMethods.includes('update')) {
-          const updatedObject = await updateById(model, modelId, ctx.request.body)
-          result = deletedObject.updated_at
+          return updateById(model)(ctx, next)
         }
         break
       case 'DELETE':
         if (allowedMethods.includes('remove')) {
-          const deletedObject = await removeById(model, modelId)
-          result = deletedObject.deleted_at
+          return removeById(model)(ctx, next)
         }
         break
-      }
-      if (result) {
+    }
+    await next()
+  }
+}
+const findById = (model, returning = true) => {
+  return compose([UUIDValidate, SchemaValidate(restfulSchema.getSchema, 'query'), async (ctx, next) => {
+    const modelId = ctx.params.id
+    try {
+      const result = await restfulService.findById(model, modelId, ctx.state.inputParams)
+      if (returning) {
         return ctx.body = {
-          code: 200,
+          code: HttpStatusCode.HTTP_OK,
           message: 'success',
           data: result
         }
       } else {
+        const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
+        ctx.state[instanceName] = result
         await next()
       }
-    }])
-  },
-  findById: function (model) {
-    return compose([UUIDValidate, async (ctx, next) => {
-      const modelId = ctx.params.id
-      const result = await findById(model, modelId, ctx.request.query)
-      const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
-      ctx.state[instanceName] = result
-      await next()
-    }])
-  },
-  list: function (model) {
-    return async (ctx, next) => {
-      const result = await list(model, ctx.request.query)
-      const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
-      ctx.state[`${instanceName}List`] = result
-      await next()
+    } catch (e) {
+      ctx.throws(e)
     }
-  },
-  create: function (model) {
-    return async (ctx, next) => {
-      const result = await create(model, ctx.request.body)
-      const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
-      ctx.state[instanceName] = result
-      await next()
+  }])
+}
+const list = (model, returning = true) => {
+  return compose([SchemaValidate(restfulSchema.listSchema, 'query', {
+    allowUnknown: true,
+    stripUnknown: false
+  }), async (ctx, next) => {
+    try {
+      const result = await restfulService.list(model, ctx.state.inputParams)
+      if (returning) {
+        return ctx.body = {
+          code: HttpStatusCode.HTTP_OK,
+          message: 'success',
+          data: result
+        }
+      } else {
+        const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
+        ctx.state[`${instanceName}List`] = result
+        await next()
+      }
+    } catch (e) {
+      ctx.throws(e)
     }
-  },
-  updateById: function (model) {
-    return compose([UUIDValidate, async (ctx, next) => {
-      const modelId = ctx.params.id
-      const result = await updateById(model, modelId, ctx.request.body)
-      ctx.state[`updated${model.name}`] = result
-      await next()
-    }])
-  },
-  removeById: function (model) {
-    return compose([UUIDValidate, async (ctx, next) => {
-      const modelId = ctx.params.id
-      const result = await removeById(model, modelId)
-      ctx.state[`deleted${model.name}`] = result
-      await next()
-    }])
+  }])
+}
+const create = (model, returning = true) => {
+  return async (ctx, next) => {
+    try {
+      const result = await restfulService.create(model, ctx.request.body)
+      if (returning) {
+        return ctx.body = {
+          code: HttpStatusCode.HTTP_CREATED,
+          message: 'success',
+          data: result
+        }
+      } else {
+        const instanceName = model.name.charAt(0).toLowerCase() + model.name.substring(1)
+        ctx.state[instanceName] = result
+        await next()
+      }
+    } catch (e) {
+      ctx.throws(e)
+    }
   }
+}
+const updateById = (model, returning = true) => {
+  return compose([UUIDValidate, async (ctx, next) => {
+    const modelId = ctx.params.id
+    try {
+      const result = await restfulService.updateById(model, modelId, ctx.request.body)
+      if (returning) {
+        return ctx.body = {
+          code: HttpStatusCode.HTTP_OK,
+          message: 'success',
+          data: {
+            updated_at: result.updated_at
+          }
+        }
+      } else {
+        ctx.state[`updated${model.name}`] = result
+        await next()
+      }
+    } catch (e) {
+      ctx.throws(e)
+    }
+  }])
+}
+const removeById = (model, returning = true) => {
+  return compose([UUIDValidate, async (ctx, next) => {
+    const modelId = ctx.params.id
+    try {
+      const result = await restfulService.removeById(model, modelId)
+      if (returning) {
+        return ctx.body = {
+          code: HttpStatusCode.HTTP_OK,
+          message: 'success',
+          data: {
+            deleted_at: result.deleted_at
+          }
+        }
+      } else {
+        ctx.state[`deleted${model.name}`] = result
+        await next()
+      }
+    } catch (e) {
+      ctx.throws(e)
+    }
+  }])
+}
+const restoreById = (model, returning = true) => {
+  return compose([UUIDValidate, async (ctx, next) => {
+    const modelId = ctx.params.id
+    try {
+      const result = await restfulService.restoreById(model, modelId)
+      if (returning) {
+        return ctx.body = {
+          code: HttpStatusCode.HTTP_OK,
+          message: 'success',
+          data: {
+            updated_at: result.updated_at
+          }
+        }
+      } else {
+        ctx.state[`restored${model.name}`] = result
+        await next()
+      }
+    } catch (e) {
+      ctx.throws(e)
+    }
+  }])
+}
+module.exports = {
+  auto,
+  findById,
+  list,
+  create,
+  updateById,
+  removeById,
+  restoreById
 }

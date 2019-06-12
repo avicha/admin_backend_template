@@ -1,11 +1,41 @@
 const Koa = require('koa')
-const middlewares = require('./middlewares')
-const exceptions = require('./exceptions')
-const routers = require('./routers')
-//实例化app
-const app = new Koa()
+const mkdirp = require('mkdirp')
 //配置文件
 const config = require('./config')
+const connections = require('./connections')
+const constants = require('./constants')
+const controllers = require('./controllers')
+const models = require('./database/models')
+const env = require('./env')
+const exceptions = require('./exceptions')
+const middlewares = require('./middlewares')
+const routers = require('./routers')
+const schemas = require('./schemas')
+const services = require('./services')
+const utils = require('./utils')
+const loggers = require('./loggers')
+//保证上传目录存在
+mkdirp.sync(config.formidable.uploadDir, {
+  mode: 0o744
+})
+//保证日志目录存在
+mkdirp.sync(config.logger.base, {
+  mode: 0o744
+})
+//实例化app
+const app = new Koa()
+app.config = config
+app.connections = connections
+app.constants = constants
+app.controllers = controllers
+app.models = models
+app.env = env
+app.exceptions = exceptions
+app.middlewares = middlewares
+app.schemas = schemas
+app.services = services
+app.utils = utils
+app.loggers = loggers
 //配置app的secret key
 app.keys = [config.server.secretKey]
 //配置全局中间件
@@ -18,5 +48,5 @@ routers.initApp(app)
 module.exports = app
 if (!module.parent) {
   app.listen(config.server.port)
-  console.log(`app is successful running and listening ${config.server.port} now.`)
+  loggers.appLogger.info(`app is successful running and listening ${config.server.port} now.`)
 }
