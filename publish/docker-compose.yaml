@@ -8,7 +8,6 @@ services:
       - redis
       - postgres
     env_file:
-      - ../env/common.env
       - ../env/${NODE_ENV:-development}.env
     volumes:
       - "web_logs:/usr/src/app/logs"
@@ -19,11 +18,13 @@ services:
       - webnet
 
   redis:
-    image: redis
+    image: redis:5
     hostname: redis
     restart: always
     volumes:
       - "redis_data:/data"
+    ports:
+      - "6379:6379"
     networks:
       - webnet
 
