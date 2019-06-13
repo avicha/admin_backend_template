@@ -16,15 +16,15 @@ module.exports = {
       formidable: app.config.formidable
     }))
     const sessionConfig = {
-      prefix: 'sess:',
-      maxAge: 24 * 60 * 60 * 1000,
+      prefix: app.config.session.prefix,
+      maxAge: app.config.session.maxAge,
       autoCommit: true,
       overwrite: true,
       rolling: false,
       renew: false,
       externalKey: {
         get(ctx) {
-          const token = ctx.headers.token || ctx.request.query.token
+          const token = ctx.headers[app.config.session.tokenKey] || ctx.request.query[app.config.session.tokenKey]
           try {
             if (token) {
               const payload = jwt.verify(token, app.config.server.secretKey)
