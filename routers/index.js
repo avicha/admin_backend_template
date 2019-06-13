@@ -9,7 +9,6 @@ module.exports = {
     })
     apiRouter.use('/user', userRouter.initApp(app))
     apiRouter.use('/entity', app.middlewares.userAuthRequired, entityRouter.initApp(app))
-    app.use(app.middlewares.injectCtx)
     app.use(apiRouter.routes())
   }
 }

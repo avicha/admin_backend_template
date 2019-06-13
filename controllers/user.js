@@ -6,11 +6,8 @@ module.exports = class UserController extends BaseController {
     const username = ctx.request.body.username
     const password = ctx.request.body.password
     const user = await ctx.models.User.validateUser(username, password)
-    let token = jwt.sign({
-      user_id: user.id
-    }, ctx.config.server.secretKey, {
-      expiresIn: 2 * 60 * 60
-    })
+    ctx.session.loginUserId = user.id
+    let token = jwt.sign({ sessionId: ctx.session._sessCtx.externalKey }, ctx.config.server.secretKey)
     return ctx.success({ token })
   }
   async signUp(ctx) {
@@ -20,6 +17,7 @@ module.exports = class UserController extends BaseController {
     return ctx.success(ctx.state.user)
   }
   async logout(ctx) {
+    ctx.session = null
     return ctx.success()
   }
   async resetPassword(ctx) {

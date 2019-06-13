@@ -1,15 +1,11 @@
 const BaseModel = require('./base')
 const bcrypt = require('bcryptjs')
-const config = require('../../config')
-const jwt = require('jsonwebtoken')
 const {
   USER_TABLE_CODE
 } = require('../../constants/table_code')
 const UserRegisterType = require('../../constants/user_register_type')
 const UserPasswordError = require('../../exceptions/user_password_error')
-const UserNotAuthError = require('../../exceptions/user_not_auth_error')
 const UserNotFoundError = require('../../exceptions/user_not_found_error')
-const UserAuthExpiredError = require('../../exceptions/user_auth_expired_error')
 
 module.exports = (sequelize, DataTypes) => {
   class UserModel extends BaseModel {
@@ -32,22 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       } else {
         throw new UserNotFoundError(username)
       }
-    }
-    static verifyToken(token) {
-      return new Promise((resolve, reject) => {
-        jwt.verify(token, config.server.secretKey, (error, payload) => {
-          if (error) {
-            switch (error.name) {
-              case 'TokenExpiredError':
-                reject(new UserAuthExpiredError())
-              default:
-                reject(new UserNotAuthError())
-            }
-          } else {
-            resolve(payload)
-          }
-        })
-      })
     }
     static get TABLE_CODE() {
       return USER_TABLE_CODE
