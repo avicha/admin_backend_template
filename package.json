@@ -3,16 +3,6 @@
   "version": "1.0.1",
   "description": "postgres backend template",
   "main": "app.js",
-  "bin": "app.js",
-  "pkg": {
-    "scripts": [
-      "database/models/**/*.js"
-    ],
-    "assets": [
-      "publish/common.env",
-      "publish/development.env"
-    ]
-  },
   "dependencies": {
     "@hapi/joi": "^15.0.3",
     "bcryptjs": "^2.4.3",
@@ -33,7 +23,6 @@
   },
   "scripts": {
     "app": "npx sequelize db:migrate && npx sequelize db:seed:all && PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version node app.js",
-    "pkg": "pkg -t node10-macos-x64 ./",
     "build": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version ./publish/build.sh",
     "deploy": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version ./publish/deploy.sh",
     "log": "PROJECT_NAME=$npm_package_name APP_VERSION=$npm_package_version docker-compose -f publish/docker-compose.yaml -p $npm_package_name logs -f -t --tail=200",
