@@ -1,6 +1,11 @@
 const log4js = require('log4js')
 const path = require('path')
+const mkdirp = require('mkdirp')
 const loggerConfig = require('../config/logger')
+//保证日志目录存在
+mkdirp.sync(loggerConfig.base, {
+  mode: 0o744
+})
 const layout = {
   type: 'pattern',
   pattern: '%[[%d{yyyy-MM-dd hh:mm:ss.SSS}] [%p] %c%] %m (%f:%l:%o)'

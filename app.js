@@ -1,5 +1,4 @@
 const Koa = require('koa')
-const mkdirp = require('mkdirp')
 //配置文件
 const config = require('./config')
 const connections = require('./connections')
@@ -14,14 +13,7 @@ const schemas = require('./schemas')
 const services = require('./services')
 const utils = require('./utils')
 const loggers = require('./loggers')
-//保证上传目录存在
-mkdirp.sync(config.formidable.uploadDir, {
-  mode: 0o744
-})
-//保证日志目录存在
-mkdirp.sync(config.logger.base, {
-  mode: 0o744
-})
+
 //实例化app
 const app = new Koa()
 app.config = config

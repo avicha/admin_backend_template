@@ -1,3 +1,4 @@
+const mkdirp = require('mkdirp')
 const koaBody = require('koa-body')
 const logger = require('koa-logger')
 const session = require('koa-session')
@@ -10,6 +11,10 @@ module.exports = {
   ...middlewares,
   initApp(app) {
     app.use(middlewares.injectCtx)
+    //保证上传目录存在
+    mkdirp.sync(app.config.formidable.uploadDir, {
+      mode: 0o744
+    })
     //转换post数据为json，file
     app.use(koaBody({
       multipart: true,
