@@ -4,7 +4,7 @@
   "description": "postgres backend template",
   "main": "app.js",
   "dependencies": {
-    "@hapi/joi": "^15.0.3",
+    "@hapi/joi": "^15.1.1",
     "bcryptjs": "^2.4.3",
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.5.1",
